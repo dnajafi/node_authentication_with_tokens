@@ -1,4 +1,0 @@
-{
-  "dbUri": "mongodb://dnajafi:1234@ds149491.mlab.com:49491/skill_up",
-  "jwtSecret": "mySecretphrase"
-}
