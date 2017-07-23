@@ -1,17 +1,17 @@
-let express = require('express');
-let app = express();
+const express = require('express');
+const app = express();
 let port = process.env.PORT || 8080;
 
-let cookieParser = require('cookie-parser');
-let session = require('express-session');
-let morgan = require('morgan');
-let mongoose = require('mongoose');
-let bodyParser = require('body-parser');
-let path = require('path');
-let passport = require('passport');
-let flash = require('connect-flash');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const morgan = require('morgan');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const path = require('path');
+const passport = require('passport');
+const flash = require('connect-flash');
 
-let configDB = require('./config/database.js');
+const configDB = require('./config/database.js');
 mongoose.connect(configDB.url)
 require('./config/passport')(passport);
 

@@ -1,6 +1,6 @@
-let mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-let userSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({
 	local: {
 		email: String,
 		password: String
