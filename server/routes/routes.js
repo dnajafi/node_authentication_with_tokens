@@ -1,6 +1,6 @@
 let User = require('../models/user');
 
-module.exports = function(app) {
+module.exports = function(app, passport) {
 
 	app.get('/', function(req, res) {
 		res.render('index.ejs');
@@ -8,25 +8,15 @@ module.exports = function(app) {
 
 	app.get('/signup', function(req, res) {
 
-		res.render('signup.ejs', { message: 'Victory' });
+		res.render('signup.ejs', { message: req.flash('signUpMessage') });
 
 	});
 
-	app.post('/signup', function(req, res) {
-
-		let newUser = new User();
-		newUser.local.username = req.body.email;
-		newUser.local.password = req.body.password;
-
-		newUser.save(function(err) {
-			if(err) {
-				throw err;
-			}
-		});
-
-		res.redirect('/');
-
-	});
+	app.post('/signup', passport.authenticate('local-signup', {
+		successRedirect: '/',
+		failureRedirect: '/signup',
+		failureFlash: true // must set to true in order to flash a message above in failure to signup
+	}));
 
 
 	app.get('/:username/:password', function(req, res) {
