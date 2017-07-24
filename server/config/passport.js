@@ -29,22 +29,21 @@ module.exports = (passport) => {
 					// null for no error; false so that passport doesn't create a new user; 
 					return done(null, false, req.flash('signUpMessage', 'That email is already taken.'));
 				} else {
-
 					let newUser = new User();
 					newUser.local.email = email;
-					newUser.local.password = password;
-
-					newUser.save((err) => {
-						if(err) {
-							throw err;
-						}
-						return done(null, newUser);
+	
+					newUser.generateHash(password).then((hashedPassword) => {
+						newUser.local.password = hashedPassword;
+						newUser.save((err) => {
+							if(err)
+								throw err;
+							return done(null, newUser);
+						});
 					});
 				}
 			});
 		});
 	}));
-
 
 	passport.use('local-login', new LocalStrategy({
 		usernameField: 'email',
@@ -61,13 +60,14 @@ module.exports = (passport) => {
 				// not an error but is a failed user lookup/attempt at logging in
 				if(!user)
 					return done(null, false, req.flash('loginMessage', 'No user found with that email.'));
-				
-				if(user.local.password !== password)
-					return done(null, false, req.flash('loginMessage', 'Invalid email or password.'));
 
-				return done(null, user);
+				user.validPassword(password, user).then((response) => {
+					if(response)
+						return done(null, user);
+					else
+						return done(null, false, req.flash('loginMessage', 'Invalid email or password.'));
+				});
 			});
 		});
 	}));
-
 }

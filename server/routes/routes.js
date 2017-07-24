@@ -36,8 +36,7 @@ module.exports = (app, passport) => {
 	});
 
 	/*
-		*Browsers will by default try to request /favicon.ico from the root of a hostname, 
-		in order to show an icon in the browser tab.
+		*Browsers will by default try to request /favicon.ico from the root of a hostname, in order to show an icon in the browser tab.
 		*This catches the favicon.ico request and sends a 204 No Content status.
 	*/
 	app.get('/favicon.ico', (req, res) => {
@@ -72,16 +71,6 @@ function isLoggedIn(req, res, next) {
 	}
 	res.redirect('/login');
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
