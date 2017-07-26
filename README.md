@@ -9,13 +9,17 @@ module.exports = {
 Be sure to include server/config/auth.js for other configurations (facebook, google+, etc...) in the case of cloning the repo.
 Example:
 module.exports = {
-	'facebook': {
-		'clientID': '',
-		'clientSecret': '',
-		'callbackURL': ''
+	'facebookAuth': {
+		'clientID': 'ADD_THIS',
+		'clientSecret': 'ADD_THIS',
+		'callbackURL': 'ADD_THIS'
+	},
+	'googleAuth': {
+		'clientID': 'ADD_THIS',
+		'clientSecret': 'ADD_THIS',
+		'callbackURL': 'ADD_THIS'
 	}
 }
-
 
 Much of this code was built off of Brent Aureli's node tutorial/youtube series. I've integrated some changes such as:
 	* async password encryption

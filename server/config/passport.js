@@ -1,5 +1,6 @@
 const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const User = require('../models/user');
 const configAuth = require('./auth');
 
@@ -76,16 +77,14 @@ module.exports = (passport) => {
 
 
 	passport.use(new FacebookStrategy({
-    clientID: configAuth.facebook.clientID,
-    clientSecret: configAuth.facebook.clientSecret,
-    callbackURL: configAuth.facebook.callbackURL,
+    clientID: configAuth.facebookAuth.clientID,
+    clientSecret: configAuth.facebookAuth.clientSecret,
+    callbackURL: configAuth.facebookAuth.callbackURL,
     profileFields: ['id', 'emails', 'name']
   },
   (accessToken, refreshToken, profile, done) => {
-    process.nextTick(() => {
-
+    process.nextTick( () => {
     	User.findOne({ 'facebook.id': profile.id }, (err, user) => {
-
     		if(err)
     			return done(err);
     		if(user) {
@@ -107,12 +106,42 @@ module.exports = (passport) => {
     			});
 
     		}
-
-
-
-
     	});
+    });
+  }));
 
+  
+
+  passport.use(new GoogleStrategy({
+    clientID: configAuth.googleAuth.clientID,
+    clientSecret: configAuth.googleAuth.clientSecret,
+    callbackURL: configAuth.googleAuth.callbackURL,
+    passReqToCallback : true
+  },
+  (request, accessToken, refreshToken, profile, done) => {
+  	process.nextTick( () => {
+    	User.findOne({ 'google.id': profile.id }, (err, user) => {
+    		if(err)
+    			return done(err);
+    		if(user) {
+    			return done(null, user);
+    		}
+    		else {
+    			// user does not exist; make a new user
+    			let newUser = new User();
+
+    			newUser.google.id = profile.id;
+    			newUser.google.token = accessToken;
+    			newUser.google.name = profile.displayName;
+    			newUser.google.email = profile.emails[0].value;
+
+    			newUser.save((err) => {
+    				if(err)
+    					throw err;
+    				return done(null, newUser);
+    			});
+    		}
+    	});
     });
   }));
 

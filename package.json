@@ -1,5 +1,5 @@
 {
-  "name": "peoplegrovecodingchallenge",
+  "name": "nodemoduleauthentication",
   "version": "1.0.0",
   "description": "coding challenge for PeopleGrove",
   "main": "index.js",
@@ -22,6 +22,8 @@
     "nodemon": "^1.11.0",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.1",
+    "passport-google-oauth": "^1.0.0",
+    "passport-google-oauth2": "^0.1.6",
     "passport-local": "^1.0.0",
     "path": "^0.12.7"
   },

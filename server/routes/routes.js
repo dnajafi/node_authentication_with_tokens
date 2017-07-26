@@ -49,7 +49,7 @@ module.exports = (app, passport) => {
 	// Redirect the user to Facebook for authentication.  When complete,
 	// Facebook will redirect the user back to the application at
 	// /auth/facebook/callback
-	// add {scope: ['email']} in order to access facebook users email
+	// add {scope: ['email']} in order to access facebook user's email
 	app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 
 	// Facebook will redirect the user to this URL after approval.  Finish the
@@ -57,6 +57,11 @@ module.exports = (app, passport) => {
 	// access was granted, the user will be logged in.  Otherwise,
 	// authentication has failed.
 	app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/profile', failureRedirect: '/' }));
+
+	// add {scope: ['profile', 'email']} in order to access google user's profile and email
+	app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+	app.get('/auth/google/callback', passport.authenticate('google', { successRedirect: '/profile', failureRedirect: '/' }));
 
 }
 
