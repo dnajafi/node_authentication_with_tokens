@@ -43,26 +43,22 @@ module.exports = (app, passport) => {
 		res.status(204);
 	});
 
-	app.get('/:username/:password', (req, res) => {
 
-		let newUser = new User();
 
-		newUser.local.username = req.params.username;
-		newUser.local.password = req.params.password;
+	// Facebook auth routes
+	// Redirect the user to Facebook for authentication.  When complete,
+	// Facebook will redirect the user back to the application at
+	// /auth/facebook/callback
+	// add {scope: ['email']} in order to access facebook users email
+	app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 
-		console.log(newUser.local.username);
-		console.log(newUser.local.password);
+	// Facebook will redirect the user to this URL after approval.  Finish the
+	// authentication process by attempting to obtain an access token.  If
+	// access was granted, the user will be logged in.  Otherwise,
+	// authentication has failed.
+	app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/profile', failureRedirect: '/' }));
 
-		newUser.save((err) => {
-			if(err) {
-				throw err;
-			}
-		});
-
-		res.send("Success");
-	});
-};
-
+}
 
 function isLoggedIn(req, res, next) {
 	// if session has been authenticated, return next (which means to continue) 
@@ -71,6 +67,5 @@ function isLoggedIn(req, res, next) {
 	}
 	res.redirect('/login');
 }
-
 
 

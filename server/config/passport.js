@@ -1,5 +1,7 @@
 const LocalStrategy = require('passport-local').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 const User = require('../models/user');
+const configAuth = require('./auth');
 
 module.exports = (passport) => {
 	// serializing a user is used to save in session storage in the website
@@ -70,4 +72,59 @@ module.exports = (passport) => {
 			});
 		});
 	}));
+
+
+
+	passport.use(new FacebookStrategy({
+    clientID: configAuth.facebook.clientID,
+    clientSecret: configAuth.facebook.clientSecret,
+    callbackURL: configAuth.facebook.callbackURL,
+    profileFields: ['id', 'emails', 'name']
+  },
+  (accessToken, refreshToken, profile, done) => {
+    process.nextTick(() => {
+
+    	User.findOne({ 'facebook.id': profile.id }, (err, user) => {
+
+    		if(err)
+    			return done(err);
+    		if(user) {
+    			return done(null, user);
+    		}
+    		else {
+    			// user does not exist; make a new user
+    			let newUser = new User();
+
+    			newUser.facebook.id = profile.id;
+    			newUser.facebook.token = accessToken;
+    			newUser.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
+    			newUser.facebook.email = profile.emails[0].value;
+
+    			newUser.save((err) => {
+    				if(err)
+    					throw err;
+    				return done(null, newUser);
+    			});
+
+    		}
+
+
+
+
+    	});
+
+    });
+  }));
+
+
+
+
+
+
+
+
 }
+
+
+
+
