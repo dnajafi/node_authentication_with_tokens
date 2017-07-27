@@ -25,4 +25,4 @@ module.exports = {
 
 Much of this code was built off of Brent Aureli's node tutorial/youtube series. I've integrated some changes such as:
 	* async password encryption
-	* some ES6 syntax
+	* some ES6 syntax 
