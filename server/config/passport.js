@@ -46,7 +46,7 @@ module.exports = (passport) => {
 						});
 					});
 				} else {
-					// they are logged in and we should merge their local account info into their current profile info in db
+					// they are logged in and we should merge their local account info into their current profile in db
 					let user = req.user;
 					user.local.email = email;
 
@@ -105,6 +105,20 @@ module.exports = (passport) => {
 	    		if(err)
 	    			return done(err);
 	    		if(user) {
+
+	    			// this would be the case if the user previously linked their facebook account but then unlinked it (deleting their access token)
+	    			if(!user.facebook.token) {
+	    				// update new access token
+	    				user.facebook.token = accessToken;
+
+	    				// update their email and name just in case they have done so in facebook in the interim
+	    				user.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
+	    				user.facebook.email = profile.emails[0].value;
+	    				user.save((err) => {
+	    					if(err)
+	    						throw err
+	    				});
+	    			}
 	    			return done(null, user);
 	    		}
 	    		else {
@@ -159,6 +173,19 @@ module.exports = (passport) => {
 	    		if(err)
 	    			return done(err);
 	    		if(user) {
+	    			// this would be the case if the user previously linked their facebook account but then unlinked it (deleting their access token)
+	    			if(!user.google.token) {
+	    				// update new access token
+	    				user.google.token = accessToken;
+
+	    				// update their email and name just in case they have done so in facebook in the interim
+	    				user.google.name = profile.name.displayName
+	    				user.google.email = profile.emails[0].value;
+	    				user.save((err) => {
+	    					if(err)
+	    						throw err
+	    				});
+	    			}
 	    			return done(null, user);
 	    		}
 	    		else {

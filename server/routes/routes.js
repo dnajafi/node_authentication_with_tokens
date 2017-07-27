@@ -75,6 +75,52 @@ module.exports = (app, passport) => {
 		failureRedirect: '/connect/local',
 		failureFlash: true
 	}));
+
+
+	// remove facebook token in user profile
+	app.get('/unlink/facebook', (req, res) => {
+		let user = req.user;
+
+		user.facebook.token = null;
+		user.save((err) => {
+			if(err)
+				throw err;
+			res.redirect('/profile');
+		});
+
+	});
+
+	// delete local account data if user wants to unlink
+	app.get('/unlink/local', (req, res) => {
+
+		let user = req.user;
+
+		user.local.password = null;
+		user.local.email = null;
+
+		user.save((err) => {
+			if(err)
+				throw err
+
+			res.redirect('/profile');
+		});
+		
+	});
+
+
+	// remove googe token in user profile
+	app.get('/unlink/google', (req, res) => {
+		let user = req.user;
+
+		user.google.token = null;
+
+		user.save((err) => {
+			if(err)
+				throw err
+			res.redirect('/profile');
+		});
+	});
+
 }
 
 function isLoggedIn(req, res, next) {
