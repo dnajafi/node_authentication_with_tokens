@@ -44,7 +44,6 @@ module.exports = (app, passport) => {
 	});
 
 
-
 	// Facebook auth routes
 	// Redirect the user to Facebook for authentication.  When complete,
 	// Facebook will redirect the user back to the application at
@@ -63,6 +62,19 @@ module.exports = (app, passport) => {
 
 	app.get('/auth/google/callback', passport.authenticate('google', { successRedirect: '/profile', failureRedirect: '/' }));
 
+
+	app.get('/connect/facebook', passport.authorize('facebook', { scope: 'email' }));
+	app.get('/connect/google', passport.authorize('google', { scope: ['profile', 'email'] }));
+
+	app.get('/connect/local', (req, res) => {
+		res.render('connect-local.ejs', { message: req.flash('signUpMessage') });
+	});
+
+	app.post('/connect/local', passport.authenticate('local-signup', {
+		successRedirect: '/profile',
+		failureRedirect: '/connect/local',
+		failureFlash: true
+	}));
 }
 
 function isLoggedIn(req, res, next) {

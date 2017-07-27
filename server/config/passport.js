@@ -31,7 +31,9 @@ module.exports = (passport) => {
 				if(user){
 					// null for no error; false so that passport doesn't create a new user; 
 					return done(null, false, req.flash('signUpMessage', 'That email is already taken.'));
-				} else {
+				} 
+				if(!req.user) {
+					// if no user exists and user is not logged in than this is a brand new authentication and so we want to add them to our db
 					let newUser = new User();
 					newUser.local.email = email;
 	
@@ -41,6 +43,19 @@ module.exports = (passport) => {
 							if(err)
 								throw err;
 							return done(null, newUser);
+						});
+					});
+				} else {
+					// they are logged in and we should merge their local account info into their current profile info in db
+					let user = req.user;
+					user.local.email = email;
+
+					user.generateHash(password).then((hashedPassword) => {
+						user.local.password = hashedPassword;
+						user.save((err) => {
+							if(err)
+								throw err;
+							return done(null, user);
 						});
 					});
 				}
@@ -74,43 +89,59 @@ module.exports = (passport) => {
 		});
 	}));
 
-
-
 	passport.use(new FacebookStrategy({
     clientID: configAuth.facebookAuth.clientID,
     clientSecret: configAuth.facebookAuth.clientSecret,
     callbackURL: configAuth.facebookAuth.callbackURL,
-    profileFields: ['id', 'emails', 'name']
+    profileFields: ['id', 'emails', 'name'],
+    passReqToCallback: true
   },
-  (accessToken, refreshToken, profile, done) => {
+  (request, accessToken, refreshToken, profile, done) => {
     process.nextTick( () => {
-    	User.findOne({ 'facebook.id': profile.id }, (err, user) => {
-    		if(err)
-    			return done(err);
-    		if(user) {
-    			return done(null, user);
-    		}
-    		else {
-    			// user does not exist; make a new user
-    			let newUser = new User();
 
-    			newUser.facebook.id = profile.id;
-    			newUser.facebook.token = accessToken;
-    			newUser.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
-    			newUser.facebook.email = profile.emails[0].value;
+    	// user is not logged in yet
+    	if(!request.user) {
+    		User.findOne({ 'facebook.id': profile.id }, (err, user) => {
+	    		if(err)
+	    			return done(err);
+	    		if(user) {
+	    			return done(null, user);
+	    		}
+	    		else {
+	    			// user does not exist; make a new user
+	    			let newUser = new User();
 
-    			newUser.save((err) => {
-    				if(err)
-    					throw err;
-    				return done(null, newUser);
-    			});
+	    			newUser.facebook.id = profile.id;
+	    			newUser.facebook.token = accessToken;
+	    			newUser.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
+	    			newUser.facebook.email = profile.emails[0].value;
 
-    		}
-    	});
+	    			newUser.save((err) => {
+	    				if(err)
+	    					throw err;
+	    				return done(null, newUser);
+	    			});
+	    		}
+	    	});
+
+    	}
+    	// user is logged in already and needs their facebook info to be merged into user's current profile in db
+    	else {
+    		let user = request.user;
+
+    		user.facebook.id = profile.id;
+    		user.facebook.token = accessToken;
+	    	user.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
+	    	user.facebook.email = profile.emails[0].value;
+
+	    	user.save((err) => {
+  				if(err)
+  					throw err;
+  				return done(null, user);
+  			});
+    	}
     });
   }));
-
-  
 
   passport.use(new GoogleStrategy({
     clientID: configAuth.googleAuth.clientID,
@@ -120,35 +151,51 @@ module.exports = (passport) => {
   },
   (request, accessToken, refreshToken, profile, done) => {
   	process.nextTick( () => {
-    	User.findOne({ 'google.id': profile.id }, (err, user) => {
-    		if(err)
-    			return done(err);
-    		if(user) {
-    			return done(null, user);
-    		}
-    		else {
-    			// user does not exist; make a new user
-    			let newUser = new User();
 
-    			newUser.google.id = profile.id;
-    			newUser.google.token = accessToken;
-    			newUser.google.name = profile.displayName;
-    			newUser.google.email = profile.emails[0].value;
+  		// user is not logged in yet
+  		if(!request.user) {
 
-    			newUser.save((err) => {
-    				if(err)
-    					throw err;
-    				return done(null, newUser);
-    			});
-    		}
-    	});
+  			User.findOne({ 'google.id': profile.id }, (err, user) => {
+	    		if(err)
+	    			return done(err);
+	    		if(user) {
+	    			return done(null, user);
+	    		}
+	    		else {
+	    			// user does not exist; make a new user
+	    			let newUser = new User();
+
+	    			newUser.google.id = profile.id;
+	    			newUser.google.token = accessToken;
+	    			newUser.google.name = profile.displayName;
+	    			newUser.google.email = profile.emails[0].value;
+
+	    			newUser.save((err) => {
+	    				if(err)
+	    					throw err;
+	    				return done(null, newUser);
+	    			});
+	    		}
+	    	});
+
+  		} 
+  		// user is logged in already and needs their facebook info to be merged into user's current profile in db
+  		else {
+  			let user = request.user;
+
+    		user.google.id = profile.id;
+  			user.google.token = accessToken;
+  			user.google.name = profile.displayName;
+  			user.google.email = profile.emails[0].value;
+
+	    	user.save((err) => {
+  				if(err)
+  					throw err;
+  				return done(null, user);
+  			});
+    	}
     });
   }));
-
-
-
-
-
 
 
 

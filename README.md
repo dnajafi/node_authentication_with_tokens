@@ -1,6 +1,8 @@
 Boilerplate node authenitcation code without using tokens.
 
-Be sure to include server/config/database.js for database configuration in the case of cloning the repo.
+Allows for local-strategy authentication, facebook oauth authentication, google+ oauth authentication.
+
+Be sure to include server/config/database.js for Mongo database configuration in the case of cloning the repo.
 Example:
 module.exports = {
 	'url': 'route to your mlab database'
@@ -23,4 +25,4 @@ module.exports = {
 
 Much of this code was built off of Brent Aureli's node tutorial/youtube series. I've integrated some changes such as:
 	* async password encryption
-	* some ES6 syntax  
+	* some ES6 syntax
