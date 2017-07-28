@@ -1,4 +1,4 @@
-#Boilerplate node authenitcation code without using tokens.
+# Boilerplate node authenitcation code without using tokens.
 
 Allows for local-strategy authentication, facebook oauth authentication, google+ oauth authentication.
 
