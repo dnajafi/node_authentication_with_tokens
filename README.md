@@ -4,13 +4,16 @@
 
 #### Be sure to include server/config/database.js for Mongo database configuration in the case of cloning the repo.
 ##### Example:
-* module.exports = {
+```javascript
+module.exports = {
 	'url': 'route to your mlab database'
 }
+```
 
 #### Be sure to include server/config/auth.js for other configurations (facebook, google+, etc...) in the case of cloning the repo.
 ##### Example:
-* module.exports = {
+```javascript
+module.exports = {
 	'facebookAuth': {
 		'clientID': 'ADD_THIS',
 		'clientSecret': 'ADD_THIS',
@@ -22,6 +25,7 @@
 		'callbackURL': 'ADD_THIS'
 	}
 }
+```
 
 #### Much of this code was built off of Brent Aureli's node tutorial/youtube series. I've integrated some changes such as:
 	* async password encryption
