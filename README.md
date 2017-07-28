@@ -3,13 +3,13 @@
 #### Allows for local-strategy authentication, facebook oauth authentication, google+ oauth authentication.
 
 #### Be sure to include server/config/database.js for Mongo database configuration in the case of cloning the repo.
-#### Example:
+##### Example:
 * module.exports = {
 	'url': 'route to your mlab database'
 }
 
 #### Be sure to include server/config/auth.js for other configurations (facebook, google+, etc...) in the case of cloning the repo.
-#### Example:
+##### Example:
 * module.exports = {
 	'facebookAuth': {
 		'clientID': 'ADD_THIS',
