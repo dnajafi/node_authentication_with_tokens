@@ -6,7 +6,7 @@
 ##### Example:
 ```javascript
 module.exports = {
-	'url': 'route to your mlab database'
+	'url': 'URL_TO_MLAB_DB'
 }
 ```
 
