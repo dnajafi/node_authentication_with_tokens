@@ -8,7 +8,7 @@ module.exports = (passport) => {
 	// serializing a user is used to save in session storage in the website
 	// deserailzing brings back an entire user from the id or username
 	passport.serializeUser((user, done) => {
-		done(null, user.id);
+		done(null, user.id); // only save user.id in a session
 	});
 
 	passport.deserializeUser((id, done) => {
@@ -223,11 +223,4 @@ module.exports = (passport) => {
     	}
     });
   }));
-
-
-
 }
-
-
-
-
