@@ -1,4 +1,6 @@
-# Boilerplate node authenitcation code without using tokens.
+# Boilerplate node authenitcation code using tokens.
+## Tokens protect designated routes in routes/api.js
+### Default token expiration is 60 seconds but can be changed in the token model defined in user.js
 
 #### Allows for local-strategy authentication, facebook oauth authentication, google+ oauth authentication.
 

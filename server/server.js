@@ -51,6 +51,10 @@ app.set('views', path.join(__dirname, '/views')); // manually set where the view
 
 /********************* ROUTERS **********************/
 
+let api = express.Router();
+require('./routes/api.js')(api, passport);
+app.use('/api', api); // use auth router anytime anybody navigates to our website /auth
+
 let auth = express.Router();
 require('./routes/auth.js')(auth, passport);
 app.use('/auth', auth); // use auth router anytime anybody navigates to our website /auth
